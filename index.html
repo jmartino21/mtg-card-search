@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Search</title>
+    <script>
+        let ownerFilter = "";
+
+        async function searchCards() {
+            let input = document.getElementById("cardNames").value;
+            let cardList = input.split("\n").map(card => card.trim()).filter(card => card);
+            
+            let response = await fetch("/api/search", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cards: cardList })
+            });
+            
+            let results = await response.json();
+            displayResults(results);
+        }
+        
+        function filterResults(owner) {
+            ownerFilter = owner;
+            searchCards();
+        }
+        
+        function displayResults(results) {
+            let table = document.getElementById("results");
+            table.innerHTML = "<tr><th>Card Name</th><th>Set Name</th><th>Quantity</th><th>Owner</th></tr>";
+            
+            results.filter(card => ownerFilter === "" || card["Owner Name"] === ownerFilter).forEach(card => {
+                let row = table.insertRow();
+                row.insertCell(0).innerText = card["Card Name"];
+                row.insertCell(1).innerText = card["Set Name"];
+                row.insertCell(2).innerText = card["Quantity"];
+                row.insertCell(3).innerText = card["Owner Name"];
+            });
+        }
+    </script>
+</head>
+<body>
+    <h2>Card Search</h2>
+    <textarea id="cardNames" rows="5" cols="50" placeholder="Paste card names here..."></textarea>
+    <br>
+    <button onclick="searchCards()">Search</button>
+    <button onclick="filterResults('Devin')">Filter: Devin</button>
+    <button onclick="filterResults('Eric')">Filter: Eric</button>
+    <button onclick="filterResults('Joe')">Filter: Joe</button>
+    <br><br>
+    <table id="results" border="1">
+        <tr>
+            <th>Card Name</th>
+            <th>Set Name</th>
+            <th>Quantity</th>
+            <th>Owner</th>
+        </tr>
+    </table>
+</body>
+</html>

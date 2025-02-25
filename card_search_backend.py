@@ -4,7 +4,7 @@ import pandas as pd
 from fastapi.responses import FileResponse
 import os
 # Load the CSV file
-CSV_PATH = "C:/Users/Joe/Desktop/MTG Commander Deck lists/MTG Master Library App Search/Combined_Card_Collections.csv"
+CSV_PATH = os.path.join(os.path.dirname(__file__), "Combined_Card_Collections.csv")
 df = pd.read_csv(CSV_PATH)
 
 # Initialize FastAPI
